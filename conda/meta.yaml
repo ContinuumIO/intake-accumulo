@@ -1,0 +1,37 @@
+package:
+  name: intake-accumulo
+  version: {{ GIT_DESCRIBE_TAG }}
+
+source:
+  path: ..
+
+build:
+  number: {{ GIT_DESCRIBE_NUMBER }}
+  script:
+    - python setup.py install --single-version-externally-managed --record=record.txt
+  noarch: python
+
+requirements:
+  build:
+    - python
+    - jinja2
+  run:
+    - python
+    - intake
+    - pyaccumulo
+
+test:
+  source_files:
+    - tests
+  requires:
+    - pytest
+    - pytest-cov
+    - coverage
+  commands:
+    - py.test --verbose --cov=intake_accumulo tests
+
+about:
+  home: https://github.com/ContinuumIO/intake-accumulo
+  license: BSD
+  license_file: LICENSE
+  summary: Intake Accumulo plugin
