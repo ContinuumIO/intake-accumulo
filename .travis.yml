@@ -1,8 +1,13 @@
 language: generic
 
+sudo: required
+
 os:
   - linux
   - osx
+
+services:
+  - docker
 
 git:
   depth: false
