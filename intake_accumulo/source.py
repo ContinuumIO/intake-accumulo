@@ -16,12 +16,10 @@ KeyValue = namedtuple('KeyValue', [dtype[0] for dtype in dtypes])
 
 class AccumuloSource(base.DataSource):
     def __init__(self, table, host, port, username, password, metadata=None):
-        from pyaccumulo import Accumulo
+        from .accumulo import Accumulo
+
+        self._client = Accumulo(host, port, username, password)
         self._table = table
-        self._connection = Accumulo(host=host,
-                                    port=port,
-                                    user=username,
-                                    password=password)
 
         super(AccumuloSource, self).__init__(container='dataframe',
                                              metadata=metadata)
@@ -35,16 +33,17 @@ class AccumuloSource(base.DataSource):
 
     def _get_partition(self, i):
         data = []
-        for entry in self._connection.scan(self._table):
-            kv = KeyValue(entry.row,
-                          entry.cf,
-                          entry.cq,
-                          entry.cv,
-                          entry.ts,
-                          entry.val)
+        scanner = self._client.create_scanner(self._table)
+        for entry in self._client.nextk(scanner).results:
+            kv = KeyValue(entry.key.row,
+                          entry.key.colFamily,
+                          entry.key.colQualifier,
+                          entry.key.colVisibility,
+                          entry.key.timestamp,
+                          entry.value)
             data.append(kv)
         df = pd.DataFrame(data, columns=KeyValue._fields)
         return df.astype(dtype=OrderedDict(dtypes))
 
     def _close(self):
-        self._connection.close()
+        self._client.close()

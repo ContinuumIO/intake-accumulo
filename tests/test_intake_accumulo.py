@@ -7,27 +7,28 @@ from .utils import verify_plugin_interface, verify_datasource_interface
 
 @pytest.fixture(scope="module")
 def proxy():
-    from pyaccumulo import Accumulo, Mutation, Range
+    from intake_accumulo.accumulo import Accumulo
+
     from .utils import start_proxy, stop_proxy
 
     stop_proxy(let_fail=True)
     local_port = start_proxy()
 
-    c = Accumulo(host="localhost", port=int(local_port), user="root", password="secret")
+    client = Accumulo("localhost", int(local_port))
 
     table = "test"
-    if not c.table_exists(table):
-        c.create_table(table)
+    if not client.table_exists(table):
+        client.create_table(table)
 
     for num in range(0, 5):
-        m = Mutation("row_%d"%num)
-        m.put(cf="cf1", cq="cq1", val="%d"%num)
-        m.put(cf="cf2", cq="cq2", val="%d"%num)
-        c.write(table, m)
+        key = b"row_%d" % num
+        client.update_and_flush(table, key, family=b"cf1", qualifier=b"cq1", value=b"%d" % num)
+        client.update_and_flush(table, key, family=b"cf2", qualifier=b"cq2", value=b"%d" % num)
 
     try:
         yield local_port
     finally:
+        client.close()
         stop_proxy()
 
 
