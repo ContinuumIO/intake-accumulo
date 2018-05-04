@@ -34,8 +34,13 @@ install:
 
 script:
 - |
-  flake8 .
-  GIT_DESCRIBE_TAG=0.0.1 GIT_DESCRIBE_NUMBER=0 conda build -c intake -c defaults -c conda-forge ./conda
+  flake8 --exclude=intake_accumulo/accumulo/proxy .
+  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    GIT_DESCRIBE_TAG=0.0.1 GIT_DESCRIBE_NUMBER=0 conda build -c intake -c defaults -c conda-forge --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
+  else
+    # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
+    GIT_DESCRIBE_TAG=0.0.1 GIT_DESCRIBE_NUMBER=0 conda build -c intake -c defaults -c conda-forge --no-test --python "${CONDA_PY:0:1}.${CONDA_PY:1:2}" ./conda
+  fi
 - |
   if [ "$CONDA_PY" = "27" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then
     if [ -n "$TRAVIS_TAG" ]; then
