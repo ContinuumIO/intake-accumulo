@@ -32,7 +32,7 @@ def start_proxy():
 
     Returns the local port as a string.
     """
-    cmd = shlex.split("docker run --rm --name intake-accumulo -p 42424:42424 "
+    cmd = shlex.split("docker run --rm --name intake-accumulo --publish 42424 "
                       "jbcrail/accumulo-proxy:1.5.2")
 
     p = subprocess.Popen(cmd,
