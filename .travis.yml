@@ -6,23 +6,25 @@ services:
 git:
   depth: false
 
+# GIT_DESCRIBE_xyz are needed until the first tag is created
 env:
   global:
   - GIT_DESCRIBE_TAG=0.0.1
   - GIT_DESCRIBE_NUMBER=0
   - secure: zLU9Y6Ltcn8Rdbo/NceAef1ri+txQIqsW3Ftfp4aJHrF8ntGqnbXM2mxDmbzT6eQyLUNZ70Zga1gT4k8STF/I9KH07qlxE2HrwZKEvaEKAtjxi7yGsR8lJb8zpvG1IMBC9gZvwmHO8vOJjFGDZwm/fecf58YEFR0vRFYq2EfiN10YVzQOfKKhvikIdGYiJbjOG4uTOKMQ58LPct5ieAmn6i/lqghske4KWK0Vw58zqmq294dKQSbOeUpgUEU1LDtfZiMK7RlWYpGGDV9V2zqKNMPrsStbicqKOVp3GcqnAbRjuBE4yXIJQoGEbZZgX5qmef/4ssWQTFcqqaxRh4nSqSY/hULPtcw+0VpAA8zFQAZffdxtK5s5tgYdAfL2SgJdgdBmPhIVDyWUwASpx7pXVuolx27zD9x7fizLnwOCv4fZGomxy7+pgi6TvuWMhjbUDf8hKY/vVpfFyGK3Wca5d4wjbJ68ze3vmaUd4CHRanB93hpNzPyOcl3nsCu86B7MhUgrGWAitbjq9XxO6sa0AHUwovOYqs/aEYrfEll7pzVhP9uxqUeYFLuc7mS18boqpant+4pCRC1zFRIGQpZyRzZfgDZupHMRhKoJDOaNkWoFLl8VNw0CnHeYegSizO2zsZpkCIvYRxUYJ+4DqyQWTH2uqdpQtBF0h3AvUBw7DI=
 
+# Skipping docker tests for now
 matrix:
   include:
     - os: linux
       sudo: required
-      env: CONDA_PY=27 CONDA_TEST=1 CONDA_UPLOAD=1
+      env: CONDA_PY=27
     - os: linux
       sudo: required
       env: CONDA_PY=35
     - os: linux
       sudo: required
-      env: CONDA_PY=36
+      env: CONDA_PY=36 CONDA_UPLOAD=1
     - os: osx
       sudo: required
       env: CONDA_PY=27
