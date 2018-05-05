@@ -31,6 +31,10 @@ matrix:
       sudo: required
       env: CONDA_PY=36
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install lxc-docker
+
 install:
 - |
   echo "Installing a fresh version of Miniconda."
