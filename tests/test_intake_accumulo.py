@@ -28,7 +28,7 @@ def proxy():
         yield local_port
     finally:
         client.close()
-        #stop_proxy(name)
+        stop_proxy(name)
 
 
 def test_plugin():

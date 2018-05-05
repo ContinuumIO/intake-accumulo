@@ -35,9 +35,10 @@ def start_proxy():
     """
     name = uuid.uuid4().hex
 
-    docker_run = ("docker run --rm --name " + name + " --publish 42424 "
-                  "jbcrail/accumulo-proxy:1.5.2"
-                 )
+    docker_run = (
+        "docker run --rm --name " + name + " --publish 42424 "
+        "jbcrail/accumulo-proxy:1.5.2"
+        )
 
     cmd = shlex.split(docker_run)
 
@@ -52,7 +53,7 @@ def start_proxy():
 
         # If the process exited, raise exception
         if p.poll():
-            raise Exception('Accumulo proxy server failed to start up properly')
+            raise Exception("Accumulo proxy server failed to start up properly")
 
         # Detect when initialization has happened, so we can stop waiting when
         # the proxy server is accepting connections.
@@ -60,11 +61,12 @@ def start_proxy():
             break
 
     # Return the local port to which Docker mapped Accumulo proxy server
-    docker_inspect = ("docker inspect " + name + " --format "
-                      "'{{range $p, $conf := .NetworkSettings.Ports}} "
-                      "{{if $conf}} {{(index $conf 0).HostPort}} {{end}} "
-                      "{{end}}'"
-                     )
+    docker_inspect = (
+        "docker inspect " + name + " --format "
+        "'{{range $p, $conf := .NetworkSettings.Ports}} "
+        "{{if $conf}} {{(index $conf 0).HostPort}} {{end}} "
+        "{{end}}'"
+        )
 
     cmd = shlex.split(docker_inspect)
     port = subprocess.check_output(cmd, universal_newlines=True).strip()
@@ -75,8 +77,9 @@ def start_proxy():
 def stop_proxy(name, let_fail=False):
     """Stop an Accumulo proxy server.
 
-    This attempts to shut down the container started by ``start_proxy()``. Raise
-    an exception if this operation fails, unless ``let_fail`` evaluates to True.
+    This attempts to shut down the container started by ``start_proxy()``.
+    Raise an exception if this operation fails, unless ``let_fail`` evaluates
+    to True.
     """
     try:
         logger.debug("Stopping Accumulo proxy server...")
