@@ -11,10 +11,9 @@ def proxy():
 
     from .utils import start_proxy, stop_proxy
 
-    stop_proxy(let_fail=True)
-    local_port = start_proxy()
+    name, local_port = start_proxy()
 
-    client = Accumulo("localhost", int(local_port))
+    client = Accumulo("localhost", local_port)
 
     table = "test"
     if not client.table_exists(table):
@@ -29,7 +28,7 @@ def proxy():
         yield local_port
     finally:
         client.close()
-        stop_proxy()
+        #stop_proxy(name)
 
 
 def test_plugin():
@@ -41,7 +40,7 @@ def test_plugin():
 
 def test_open(proxy):
     plugin = accumulo.Plugin()
-    src = plugin.open("test")
+    src = plugin.open("test", port=proxy)
     assert src.container == 'dataframe'
     assert src.description is None
     verify_datasource_interface(src)
@@ -49,7 +48,7 @@ def test_open(proxy):
 
 def test_discover(proxy):
     plugin = accumulo.Plugin()
-    src = plugin.open("test")
+    src = plugin.open("test", port=proxy)
     info = src.discover()
     assert info['shape'] == (None, 6)
     assert info['npartitions'] == 1
@@ -57,12 +56,12 @@ def test_discover(proxy):
 
 def test_read(proxy):
     plugin = accumulo.Plugin()
-    src = plugin.open("test")
+    src = plugin.open("test", port=proxy)
     df = src.read()
     assert len(df) == 10
 
 
 def test_close(proxy):
     plugin = accumulo.Plugin()
-    src = plugin.open("test")
+    src = plugin.open("test", port=proxy)
     src.close()

@@ -1,6 +1,7 @@
 import logging
 import shlex
 import subprocess
+import uuid
 
 logger = logging.getLogger()
 
@@ -30,10 +31,15 @@ def start_proxy():
     output of the container process to stdout, until the database is ready to
     accept connections. This container may be stopped with ``stop_proxy()``.
 
-    Returns the local port as a string.
+    Returns the container name and local proxy port.
     """
-    cmd = shlex.split("docker run --rm --name intake-accumulo --publish 42424 "
-                      "jbcrail/accumulo-proxy:1.5.2")
+    name = uuid.uuid4().hex
+
+    docker_run = ("docker run --rm --name " + name + " --publish 42424 "
+                  "jbcrail/accumulo-proxy:1.5.2"
+                 )
+
+    cmd = shlex.split(docker_run)
 
     p = subprocess.Popen(cmd,
                          stdout=subprocess.PIPE,
@@ -54,14 +60,19 @@ def start_proxy():
             break
 
     # Return the local port to which Docker mapped Accumulo proxy server
-    cmd = shlex.split("docker inspect intake-accumulo --format "
+    docker_inspect = ("docker inspect " + name + " --format "
                       "'{{range $p, $conf := .NetworkSettings.Ports}} "
                       "{{if $conf}} {{(index $conf 0).HostPort}} {{end}} "
-                      "{{end}}'")
-    return subprocess.check_output(cmd, universal_newlines=True).strip()
+                      "{{end}}'"
+                     )
+
+    cmd = shlex.split(docker_inspect)
+    port = subprocess.check_output(cmd, universal_newlines=True).strip()
+
+    return name, int(port)
 
 
-def stop_proxy(let_fail=False):
+def stop_proxy(name, let_fail=False):
     """Stop an Accumulo proxy server.
 
     This attempts to shut down the container started by ``start_proxy()``. Raise
@@ -69,7 +80,7 @@ def stop_proxy(let_fail=False):
     """
     try:
         logger.debug("Stopping Accumulo proxy server...")
-        subprocess.check_output("docker kill intake-accumulo", shell=True)
+        subprocess.check_output("docker kill " + name, shell=True)
     except subprocess.CalledProcessError:
         if not let_fail:
             raise

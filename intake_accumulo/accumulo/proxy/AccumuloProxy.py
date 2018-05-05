@@ -17020,11 +17020,9 @@ class updateAndFlush_args(object):
             oprot.writeFieldBegin('cells', TType.MAP, 3)
             oprot.writeMapBegin(TType.STRING, TType.LIST, len(self.cells))
             for kiter345, viter346 in self.cells.items():
-                print(kiter345, viter346)
                 oprot.writeBinary(kiter345)
                 oprot.writeListBegin(TType.STRUCT, len(viter346))
                 for iter347 in viter346:
-                    print(iter347, oprot)
                     iter347.write(oprot)
                 oprot.writeListEnd()
             oprot.writeMapEnd()
