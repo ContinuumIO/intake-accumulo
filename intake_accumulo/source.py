@@ -15,6 +15,22 @@ KeyValue = namedtuple('KeyValue', [dtype[0] for dtype in dtypes])
 
 
 class AccumuloSource(base.DataSource):
+    """Read data from Accumulo table.
+
+    Parameters
+    ----------
+    table : str
+        The database table that will act as source
+    host : str
+        The server hostname for the given table
+    port : int
+        The server port for the given table
+    username : str
+        The username used to connect to the Accumulo cluster
+    password : str
+        The password used to connect to the Accumulo cluster
+    """
+
     def __init__(self, table, host, port, username, password, metadata=None):
         from .accumulo import Accumulo
 
