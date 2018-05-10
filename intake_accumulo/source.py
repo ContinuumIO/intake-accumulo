@@ -50,14 +50,20 @@ class AccumuloSource(base.DataSource):
     def _get_partition(self, i):
         data = []
         scanner = self._client.create_scanner(self._table)
-        for entry in self._client.nextk(scanner).results:
-            kv = KeyValue(entry.key.row,
-                          entry.key.colFamily,
-                          entry.key.colQualifier,
-                          entry.key.colVisibility,
-                          entry.key.timestamp,
-                          entry.value)
-            data.append(kv)
+
+        while True:
+            chunk = self._client.nextk(scanner)
+            for entry in chunk.results:
+                kv = KeyValue(entry.key.row,
+                            entry.key.colFamily,
+                            entry.key.colQualifier,
+                            entry.key.colVisibility,
+                            entry.key.timestamp,
+                            entry.value)
+                data.append(kv)
+            if not chunk.more:
+                break
+
         df = pd.DataFrame(data, columns=KeyValue._fields)
         return df.astype(dtype=OrderedDict(dtypes))
 

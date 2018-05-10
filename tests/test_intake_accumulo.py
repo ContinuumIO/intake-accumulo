@@ -19,7 +19,7 @@ def proxy():
     if not client.table_exists(table):
         client.create_table(table)
 
-    for num in range(0, 5):
+    for num in range(0, 10):
         key = b"row_%d" % num
         client.update_and_flush(table, key, family=b"cf1", qualifier=b"cq1", value=b"%d" % num)
         client.update_and_flush(table, key, family=b"cf2", qualifier=b"cq2", value=b"%d" % num)
@@ -58,7 +58,7 @@ def test_read(proxy):
     plugin = accumulo.Plugin()
     src = plugin.open("test", port=proxy)
     df = src.read()
-    assert len(df) == 10
+    assert len(df) == 20
 
 
 def test_close(proxy):
