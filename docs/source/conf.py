@@ -52,7 +52,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'intake_accumulo'
+project = u'intake-accumulo'
 copyright = u'2018, Joseph Crail'
 author = u'Joseph Crail'
 
