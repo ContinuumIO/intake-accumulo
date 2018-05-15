@@ -13,5 +13,5 @@ conda install -c intake intake-accumulo
 
 ### Caveats
 
-This plugin has been verified with Accumulo 1.5.2, pyaccumulo 1.5.x, and Python
-2.7. Support for other configurations is unverified at this time.
+This plugin has only been verified with Accumulo 1.5.2 and Thrift 0.11. Support
+for other configurations is unverified at this time.
