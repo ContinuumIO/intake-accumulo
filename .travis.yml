@@ -25,15 +25,6 @@ matrix:
     - os: linux
       sudo: required
       env: CONDA_PY=36 CONDA_UPLOAD=1
-    - os: osx
-      sudo: required
-      env: CONDA_PY=27
-    - os: osx
-      sudo: required
-      env: CONDA_PY=35
-    - os: osx
-      sudo: required
-      env: CONDA_PY=36
 
 install:
 - |
