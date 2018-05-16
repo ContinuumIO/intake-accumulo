@@ -50,7 +50,7 @@ def test_discover(proxy):
     plugin = accumulo.Plugin()
     src = plugin.open("test", port=proxy)
     info = src.discover()
-    assert info['shape'] == (None, 6)
+    assert info['shape'] == (0, 6)
     assert info['npartitions'] == 1
 
 

@@ -8,7 +8,7 @@ dtypes = [('row', 'str'),
           ('column_family', 'str'),
           ('column_qualifier', 'str'),
           ('column_visibility', 'str'),
-          ('time', 'datetime64[ms]'),
+          ('time', 'datetime64[ns]'),
           ('value', 'object')]
 
 KeyValue = namedtuple('KeyValue', [dtype[0] for dtype in dtypes])
@@ -43,9 +43,10 @@ class AccumuloSource(base.DataSource):
                                              metadata=metadata)
 
     def _get_schema(self):
+        df = pd.DataFrame({c: pd.Series([], dtype=d) for (c, d) in dtypes})
         return base.Schema(datashape=None,
-                           dtype=OrderedDict(dtypes),
-                           shape=(None, len(dtypes)),
+                           dtype=df[:0],
+                           shape=df.shape,
                            npartitions=1,
                            extra_metadata={})
 
