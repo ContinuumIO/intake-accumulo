@@ -32,10 +32,12 @@ class AccumuloSource(base.DataSource):
     """
 
     def __init__(self, table, host, port, username, password, metadata=None):
-        from .accumulo import Accumulo
-
-        self._client = Accumulo(host, port, username, password)
         self._table = table
+        self._host = host
+        self._port = port
+        self._username = username
+        self._password = password
+        self._client = None
 
         super(AccumuloSource, self).__init__(container='dataframe',
                                              metadata=metadata)
@@ -48,6 +50,13 @@ class AccumuloSource(base.DataSource):
                            extra_metadata={})
 
     def _get_partition(self, i):
+        if self._client is None:
+            from .accumulo import Accumulo
+            self._client = Accumulo(self._host,
+                                    self._port,
+                                    self._username,
+                                    self._password)
+
         data = []
         scanner = self._client.create_scanner(self._table)
 
@@ -68,4 +77,4 @@ class AccumuloSource(base.DataSource):
         return df.astype(dtype=OrderedDict(dtypes))
 
     def _close(self):
-        self._client.close()
+        self._client = None
