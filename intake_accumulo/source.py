@@ -46,7 +46,7 @@ class AccumuloSource(base.DataSource):
         df = pd.DataFrame({c: pd.Series([], dtype=d) for (c, d) in dtypes})
         return base.Schema(datashape=None,
                            dtype=df[:0],
-                           shape=df.shape,
+                           shape=(None, len(dtypes)),
                            npartitions=1,
                            extra_metadata={})
 
