@@ -1,6 +1,7 @@
 import logging
 import shlex
 import subprocess
+import time
 import uuid
 
 logger = logging.getLogger()
@@ -59,6 +60,8 @@ def start_proxy():
         # the proxy server is accepting connections.
         if "Starting Thrift proxy" in output:
             break
+
+    time.sleep(2)
 
     # Return the local port to which Docker mapped Accumulo proxy server
     docker_inspect = (

@@ -1,5 +1,3 @@
-import time
-
 import pytest
 
 import intake_accumulo as accumulo
@@ -27,7 +25,6 @@ def proxy():
         client.update_and_flush(table, key, family=b"cf2", qualifier=b"cq2", value=b"%d" % num)
 
     try:
-        time.sleep(2)
         yield local_port
     finally:
         client.close()
