@@ -55,11 +55,11 @@ class AccumuloSource(base.DataSource):
             chunk = self._client.nextk(scanner)
             for entry in chunk.results:
                 kv = KeyValue(entry.key.row,
-                            entry.key.colFamily,
-                            entry.key.colQualifier,
-                            entry.key.colVisibility,
-                            entry.key.timestamp,
-                            entry.value)
+                              entry.key.colFamily,
+                              entry.key.colQualifier,
+                              entry.key.colVisibility,
+                              entry.key.timestamp,
+                              entry.value)
                 data.append(kv)
             if not chunk.more:
                 break
