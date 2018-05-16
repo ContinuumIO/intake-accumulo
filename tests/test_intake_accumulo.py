@@ -70,6 +70,10 @@ def test_close(proxy):
     original_df = src.read()
 
     src.close()
+
+    # Verify client connection is closed
+    assert src._client == None
+
     # Can reopen after close
     df = src.read()
 
