@@ -10,3 +10,8 @@ This plugin is for the [Intake data loader library](http://intake.readthedocs.io
 ```
 conda install -c intake intake-accumulo
 ```
+
+### Caveats
+
+This plugin has only been verified with Accumulo 1.5.2 and Thrift 0.11. Support
+for other configurations is unverified at this time.
