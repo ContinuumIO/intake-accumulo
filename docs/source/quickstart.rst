@@ -45,8 +45,8 @@ Example: Reading Accumulo table with catalog
 This example is equivalent to the above example, except we now access the table
 through an existing catalog, ``catalog.yml``.::
 
-  >>> from intake.catalog import Catalog
-  >>> c = Catalog("catalog.yml")
+  >>> import intake
+  >>> c = intake.open_catalog("catalog.yml")
   >>> df = c.basic.read()
   >>> df
         row column_family column_qualifier column_visibility                    time value
