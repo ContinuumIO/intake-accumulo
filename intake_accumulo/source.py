@@ -1,8 +1,7 @@
 from collections import namedtuple, OrderedDict
 
+from . import __version__
 from intake.source import base
-
-import pandas as pd
 
 dtypes = [('row', 'str'),
           ('column_family', 'str'),
@@ -30,8 +29,13 @@ class AccumuloSource(base.DataSource):
     password : str
         The password used to connect to the Accumulo cluster
     """
+    name = 'accumulo'
+    container = 'dataframe'
+    version = __version__
+    partition_access = False
 
-    def __init__(self, table, host, port, username, password, metadata=None):
+    def __init__(self, table, host="localhost", port=42424, username="root",
+                 password="secret", metadata=None):
         self._table = table
         self._host = host
         self._port = port
@@ -39,18 +43,17 @@ class AccumuloSource(base.DataSource):
         self._password = password
         self._client = None
 
-        super(AccumuloSource, self).__init__(container='dataframe',
-                                             metadata=metadata)
+        super(AccumuloSource, self).__init__(metadata=metadata)
 
     def _get_schema(self):
-        df = pd.DataFrame({c: pd.Series([], dtype=d) for (c, d) in dtypes})
         return base.Schema(datashape=None,
-                           dtype=df[:0],
+                           dtype=dtypes,
                            shape=(None, len(dtypes)),
                            npartitions=1,
                            extra_metadata={})
 
     def _get_partition(self, i):
+        import pandas as pd
         if self._client is None:
             from .accumulo import Accumulo
             self._client = Accumulo(self._host,

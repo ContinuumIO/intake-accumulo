@@ -2,7 +2,7 @@ import pytest
 
 import intake_accumulo as accumulo
 
-from .utils import verify_plugin_interface, verify_datasource_interface
+from .utils import verify_datasource_interface
 
 
 @pytest.fixture(scope="module")
@@ -21,8 +21,10 @@ def proxy():
 
     for num in range(0, 10):
         key = b"row_%d" % num
-        client.update_and_flush(table, key, family=b"cf1", qualifier=b"cq1", value=b"%d" % num)
-        client.update_and_flush(table, key, family=b"cf2", qualifier=b"cq2", value=b"%d" % num)
+        client.update_and_flush(table, key, family=b"cf1", qualifier=b"cq1",
+                                value=b"%d" % num)
+        client.update_and_flush(table, key, family=b"cf2", qualifier=b"cq2",
+                                value=b"%d" % num)
 
     try:
         yield local_port
@@ -31,39 +33,28 @@ def proxy():
         stop_proxy(name)
 
 
-def test_plugin():
-    plugin = accumulo.Plugin()
-    assert isinstance(plugin.version, str)
-    assert plugin.container == 'dataframe'
-    verify_plugin_interface(plugin)
-
-
 def test_open(proxy):
-    plugin = accumulo.Plugin()
-    src = plugin.open("test", port=proxy)
+    src = accumulo.AccumuloSource("test", port=proxy)
     assert src.container == 'dataframe'
     assert src.description is None
     verify_datasource_interface(src)
 
 
 def test_discover(proxy):
-    plugin = accumulo.Plugin()
-    src = plugin.open("test", port=proxy)
+    src = accumulo.AccumuloSource("test", port=proxy)
     info = src.discover()
     assert info['shape'] == (None, 6)
     assert info['npartitions'] == 1
 
 
 def test_read(proxy):
-    plugin = accumulo.Plugin()
-    src = plugin.open("test", port=proxy)
+    src = accumulo.AccumuloSource("test", port=proxy)
     df = src.read()
     assert len(df) == 20
 
 
 def test_close(proxy):
-    plugin = accumulo.Plugin()
-    src = plugin.open("test", port=proxy)
+    src = accumulo.AccumuloSource("test", port=proxy)
     original_df = src.read()
 
     src.close()
