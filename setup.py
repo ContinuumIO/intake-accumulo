@@ -16,6 +16,10 @@ setup(
     maintainer_email='jbcrail@gmail.com',
     license='BSD',
     packages=find_packages(),
+    entry_points={
+        'intake.drivers':
+            ['accumulo = intake_accumulo.source:AccumuloSource',
+        ]},
     package_data={'': ['*.yml', '*.html']},
     include_package_data=True,
     install_requires=requires,
